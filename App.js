@@ -4,6 +4,7 @@ import axios from 'axios';
 import unidecode from 'unidecode';
 import ArrowUp from 'react-native-vector-icons/AntDesign';
 import ArrowDown from 'react-native-vector-icons/AntDesign';
+import CountryFlag from 'react-native-country-flag';
 
 const API_KEY = '7ff8656d755a92e88498f4360d8ced74';
 
@@ -17,6 +18,7 @@ const App = () => {
   const [icon, setIcon] = useState('');
   const [tempMin, setTempMin] = useState('');
   const [tempMax, setTempMax] = useState('');
+  const [country, setCountry] = useState('');
 
   const getWeatherData = async () => {
     try {
@@ -29,6 +31,7 @@ const App = () => {
       setTempMax(response.data.main.temp_max);
       setTempMin(response.data.main.temp_min);
       setIcon(response.data.weather[0].icon);
+      setCountry(response.data.sys.country);
     } catch (error) {
       console.error(error);
     }
@@ -75,6 +78,10 @@ const App = () => {
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
               Max: {tempMax.toFixed(0)}°C
             </Text>
+            
+          </View>
+          <View style={{flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
+            <CountryFlag isoCode={country} size={30} />
           </View>
         </View>
       ) : null}
