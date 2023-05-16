@@ -5,12 +5,20 @@ import unidecode from 'unidecode';
 import ArrowUp from 'react-native-vector-icons/AntDesign';
 import ArrowDown from 'react-native-vector-icons/AntDesign';
 import CountryFlag from 'react-native-country-flag';
+import Wind from 'react-native-vector-icons/Feather';
+import Drop from 'react-native-vector-icons/Entypo';
+import Cloud from 'react-native-vector-icons/Entypo';
+
 
 const API_KEY = '7ff8656d755a92e88498f4360d8ced74';
 
 const removeAccents = (text) => {
   return unidecode(text);
 };
+
+const celsiusToFahrenheit = (C) =>{
+  return F = C * 1.8 + 32;
+}
 
 const App = () => {
   const [city, setCity] = useState('');
@@ -19,6 +27,11 @@ const App = () => {
   const [tempMin, setTempMin] = useState('');
   const [tempMax, setTempMax] = useState('');
   const [country, setCountry] = useState('');
+  const [windSpeed, setWindSpeed] = useState('');
+  const [humidity, setHumidity] = useState('');
+  const [cloudiness, setCloudiness] = useState('');
+
+ 
 
   const getWeatherData = async () => {
     try {
@@ -32,10 +45,17 @@ const App = () => {
       setTempMin(response.data.main.temp_min);
       setIcon(response.data.weather[0].icon);
       setCountry(response.data.sys.country);
+      setWindSpeed(response.data.wind.speed);
+      setHumidity(response.data.main.humidity);
+      setCloudiness(response.data.clouds.all);  
     } catch (error) {
       console.error(error);
     }
   };
+
+  const tempFah = celsiusToFahrenheit(temperature).toFixed(0);
+  const maxTempFah = celsiusToFahrenheit(tempMax).toFixed(0);
+  const minTempFah = celsiusToFahrenheit(tempMin).toFixed(0);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0'}}>
@@ -66,19 +86,34 @@ const App = () => {
             style={{ width: 80, height: 80 }}
           />
           <Text style={{ fontSize: 26, fontWeight: 'bold' }}>
-            {temperature.toFixed(0)}°C
+            {temperature.toFixed(0)}°C | {tempFah}°F
           </Text>
           <View style={{ flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
             <ArrowDown name='arrowdown' color={'red'} size={20}/>
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-              Min: {tempMin.toFixed(0)}°C
+              Min: {tempMin.toFixed(0)}°C | {minTempFah}°F
             </Text>
             <Text>   </Text>
             <ArrowUp name='arrowup' color={'blue'} size={20}/>
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-              Max: {tempMax.toFixed(0)}°C
+              Max: {tempMax.toFixed(0)}°C | {maxTempFah}°F
             </Text>
             
+          </View>
+          <View>                     
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Drop name="drop" size={20}/> Humidade: {humidity}%         
+              </Text>
+          </View>
+          <View>                     
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Wind name="wind" size={20}/> Vento: {(windSpeed * 3.6).toFixed(1)} Km/h            
+              </Text>
+          </View>         
+          <View>                     
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                <Cloud name="cloud" size={20}/> Nebulosidade: {cloudiness}%            
+              </Text>
           </View>
           <View style={{flexDirection: 'row', padding: 10, justifyContent: 'space-between', alignItems: 'center' }}>
             <CountryFlag isoCode={country} size={30} />
